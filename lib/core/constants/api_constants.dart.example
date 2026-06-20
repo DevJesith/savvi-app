@@ -1,0 +1,4 @@
+class ApiConstants {
+  static const String supabaseUrl = 'PUT_HERE_YOU_URL';
+  static const String supabasePublishKey = 'PUT_HERE_YOUR_KEY';
+}
