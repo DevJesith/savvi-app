@@ -66,7 +66,7 @@ class SavviApp extends ConsumerWidget {
             );
           } else {
             // Si no hay sesion, lo dirige al Login
-            return WelcomeScreen();
+            return LoginScreen();
           }
         },
         // CASO B: Supabase esta pensando...
