@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:savvi/core/constants/api_constants.dart';
 import 'package:savvi/core/providers/auth_provider.dart';
-import 'package:savvi/features/auth/presentation/pages/login_screen.dart';
+import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
