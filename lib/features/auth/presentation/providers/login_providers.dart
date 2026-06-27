@@ -18,8 +18,8 @@ final passwordControllerProvider = Provider.autoDispose(
 
 /// Clase Notifier (Cerebro de este estado)
 ///
-/// Esta clase se encga de la logica de negocio para ocultar/mostrar texto.
-/// Hereda de [Notifier<bool>] porque el dato que vamos a menajar es un Booleano.
+/// Esta clase se encarga de la logica de negocio para ocultar/mostrar texto.
+/// Hereda de [Notifier<bool>] porque el dato que vamos a manejar es un Booleano.
 class ObscureTextNotifier extends Notifier<bool> {
   /// El metodo build es OBLIGATORIO.
   /// Define cual es el valor inicial apenas la app arranca o se carga el provider.
