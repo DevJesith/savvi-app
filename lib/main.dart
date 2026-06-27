@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:savvi/core/constants/api_constants.dart';
 import 'package:savvi/core/providers/auth_provider.dart';
 import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
+import 'package:savvi/features/auth/presentation/screens/splash_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -34,6 +35,20 @@ class SavviApp extends ConsumerWidget {
     // watch hace que esta pantalla se redibuje sola si el usuario entra o sale
     final authState = ref.watch(authStateProvider);
 
+    // Escucha el provider para saber si la animacion o espera del Splash ya terminO.
+    // Al usar ref.watch, Riverpod reconstruira este build() automaticamente cuando el valor cambie de false a true.
+    final isSplashFinished = ref.watch(splashFinishedProvider);
+
+    // 1. Prioridad Absoluta: Si el Splash NO ha terminado de mostrarse (isSplashFinished es false),
+    // mostramos de manera inmediata la pantalla del Splash (SplashScreen) dentro de un MaterialApp temporal.
+    // Esto evita que el usuario vea el Login o el Dashboard por un instante mientras se inicia la app.
+    if (!isSplashFinished) {
+      return const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(),
+      );
+    }
+
     return MaterialApp(
       title: 'Savvi',
       debugShowCheckedModeBanner: false,
@@ -56,9 +71,12 @@ class SavviApp extends ConsumerWidget {
                   children: [
                     Text('Hola, ${data.session!.user.email}'),
                     const SizedBox(height: 20),
-                    ElevatedButton(onPressed: () async {
-                      await ref.read(authRepositoryProvider).signOut();
-                    }, child: Text("Cerrar sesion")),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await ref.read(authRepositoryProvider).signOut();
+                      },
+                      child: Text("Cerrar sesion"),
+                    ),
                   ],
                 ),
               ),
@@ -68,9 +86,9 @@ class SavviApp extends ConsumerWidget {
             return LoginScreen();
           }
         },
-        // CASO B: Supabase esta pensando...
-        loading: () =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        // TODO: CASO B: Si el splash terminó pero Supabase sigue cargando,
+        // simplemente mantenemos el Splash o un fondo neutro.
+        loading: () => SplashScreen(),
         // CASO C: Algo exploto (ej. No hay internet)
         error: (err, stack) =>
             Scaffold(body: Center(child: Text("Error de conexion; $err"))),
