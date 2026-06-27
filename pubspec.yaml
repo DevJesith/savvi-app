@@ -78,6 +78,7 @@ flutter:
   assets:
     - assets/logo_google.png
     - assets/apple_logo.png
+    - assets/Logo_Savvi.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
