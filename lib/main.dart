@@ -82,10 +82,26 @@ class SavviApp extends ConsumerWidget {
                 ),
               ),
             );
-          } else {
-            // Si no hay sesion, lo dirige al Login
-            return WelcomeScreen();
           }
+
+          // ESCENARIO 2: Usuario deslogueado
+          // Aqui llamamos al otro provider
+          final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
+
+          return hasSeenOnboarding.when(
+            data: (seen) {
+              if (seen) {
+                // Ya lo vio -> va directo al Login
+                return const LoginScreen();
+              } else {
+                // Es nuevo -> Va al Onboarding (welcome)
+                return const WelcomeScreen();
+              }
+            },
+            loading: () => const SplashScreen(),
+            error: (_, __) =>
+                const LoginScreen(), // Por si falla, mejor mandarlo al login
+          );
         },
         // TODO: CASO B: Si el splash terminó pero Supabase sigue cargando,
         // simplemente mantenemos el Splash o un fondo neutro.

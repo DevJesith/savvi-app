@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:savvi/core/constants/api_constants.dart';
+import 'package:savvi/core/providers/auth_provider.dart';
 import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
 import 'package:savvi/shared/widgets/onboardingContent_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Notifier para manejar el índice de página
 class PageIndexNotifier extends Notifier<int> {
@@ -71,11 +74,14 @@ class WelcomeScreen extends ConsumerWidget {
                     subtitle:
                         'Administra tus finanzas con reportes claros y prácticos',
                     buttonText: 'Comenzar',
-                    onButtonPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      );
+                    onButtonPressed: () async {
+                      // 1. Guardamos en la memoria local que ya vio el Onboarding
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool(ApiConstants.seenOnboardingKey, true);
+
+                      // 2. Navegamos al login
+                      // Obligamos al provider a leer el disco de nuevo
+                      ref.invalidate(hasSeenOnboardingProvider);
                     },
                   ),
                 ],

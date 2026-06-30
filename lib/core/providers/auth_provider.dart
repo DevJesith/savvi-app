@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:savvi/core/constants/api_constants.dart';
 import 'package:savvi/data/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Patron Singleton
 // Creamos una instancia unica de nuestro oficina de auth.
@@ -38,3 +40,11 @@ class SplashNotifier extends Notifier<bool> {
 final splashFinishedProvider = NotifierProvider<SplashNotifier, bool>(() {
   return SplashNotifier();
 });
+
+
+// Este provider leera si el usuario ya vio el onboarding
+// Lo ponemos como FutureProvider porque leer el dico del cel toma tiempo.
+final hasSeenOnboardingProvider = FutureProvider<bool>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool(ApiConstants.seenOnboardingKey) ?? false;
+},);
