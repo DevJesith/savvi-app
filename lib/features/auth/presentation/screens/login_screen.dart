@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:savvi/core/providers/auth_provider.dart';
 import 'package:savvi/features/auth/presentation/providers/login_providers.dart';
+import 'package:savvi/features/auth/presentation/screens/country_register_screen.dart';
 import 'package:savvi/shared/widgets/inputs_reutilizable_widgets.dart';
 
 class LoginScreen extends ConsumerWidget {
@@ -383,8 +384,12 @@ class LoginScreen extends ConsumerWidget {
                       // Boton de registro manual
                       TextButton(
                         onPressed: () {
-                          //TODO: Implement Form manual
-                          print('Registro');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CountryRegisterScreen(),
+                            ),
+                          );
                         },
                         child: Text(
                           'Registrate',
