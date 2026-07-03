@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:savvi/core/constants/api_constants.dart';
 import 'package:savvi/core/providers/auth_provider.dart';
+import 'package:savvi/core/theme/app_theme.dart';
 import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/splash_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/welcome_screen.dart';
@@ -53,10 +54,7 @@ class SavviApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Savvi',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrangeAccent),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
 
       // LA PUERTA INTELIGENTE (Auth Guard)
       // Usamos .when para manejar los 3 estados del StreamProvider
