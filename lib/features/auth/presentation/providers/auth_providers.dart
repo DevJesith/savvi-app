@@ -1,29 +1,33 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:savvi/core/constants/api_constants.dart';
-import 'package:savvi/data/repositories/auth_repository.dart';
+import 'package:savvi/features/auth/data/repositories_impl/auth_repository_impl.dart';
+import 'package:savvi/features/auth/domain/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Patron Singleton
-// Creamos una instancia unica de nuestro oficina de auth.
-// Esto permite que toda la app use el mismo cajero/repositorio
-final authRepositoryProvider = Provider((ref) {
-  return AuthRepository();
+// Provider que expone la implementacion real de Supabase
+final supabaseClientProvider = Provider<SupabaseClient>(
+  (ref) => Supabase.instance.client,
+);
+
+// Provider que expone la interfaz del Repositorio
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  // Le pasamos el cliente de Supabase al constructor
+  final client = ref.watch(supabaseClientProvider);
+  return AuthRepositoryImpl(client);
 });
 
 // Este provider se encarga de gritale a la app si el usuario esta:
 // 1. Logueado 2. Deslogueado o 3. Cargando
 final authStateProvider = StreamProvider<AuthState>((ref) {
   // Le pedimos al repositorio su "radio" (Stream)
-  return ref.read(authRepositoryProvider).onAuthStateChange;
+  return ref.watch(authRepositoryProvider).onAuthStateChange;
 });
 
-//--------- SPLASH -----------
-
-// SplashNotifier es un "Notifier" de Riverpod que maneja un estado de tipo booleano (`bool`).
-// Sirve para controlar si la pantalla de bienvenida (Splash Screen) ya terminó de mostrarse.
+// // SplashNotifier es un "Notifier" de Riverpod que maneja un estado de tipo booleano (`bool`).
+// // Sirve para controlar si la pantalla de bienvenida (Splash Screen) ya terminó de mostrarse.
 class SplashNotifier extends Notifier<bool> {
-  // El metodo build inicializa el estado. 
+  // El metodo build inicializa el estado.
   // Al empezar, el estado es `false` porque el Splash aún no ha terminado.
   @override
   build() => false;
@@ -35,16 +39,13 @@ class SplashNotifier extends Notifier<bool> {
   }
 }
 
-// Este provider expone la logica y el estado de SplashNotifier para que cualquier
-// pantalla o widget de la aplicacion pueda saber si el Splash ya termino.
-final splashFinishedProvider = NotifierProvider<SplashNotifier, bool>(() {
-  return SplashNotifier();
-});
-
+final splashFinishedProvider = NotifierProvider<SplashNotifier, bool>(
+  SplashNotifier.new,
+);
 
 // Este provider leera si el usuario ya vio el onboarding
-// Lo ponemos como FutureProvider porque leer el dico del cel toma tiempo.
+// Lo ponemos como FutureProvider porque leer el disco del cel toma tiempo.
 final hasSeenOnboardingProvider = FutureProvider<bool>((ref) async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getBool(ApiConstants.seenOnboardingKey) ?? false;
-},);
+});
