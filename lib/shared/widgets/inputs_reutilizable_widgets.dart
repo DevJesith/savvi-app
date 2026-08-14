@@ -17,8 +17,8 @@ class InputsReutilizableWidgets extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextAlign? textAlign;
   final TextAlignVertical? textAlignVertical;
-
   final bool readOnly;
+  final Function(String)? onChanged;
 
   const InputsReutilizableWidgets({
     Key? key,
@@ -36,6 +36,7 @@ class InputsReutilizableWidgets extends StatelessWidget {
     this.inputFormatters,
     this.textAlign,
     this.textAlignVertical,
+    this.onChanged
   }) : super(key: key);
 
   @override
@@ -62,6 +63,7 @@ class InputsReutilizableWidgets extends StatelessWidget {
           maxLines: maxLines,
           maxLength: maxLenght,
           readOnly: readOnly,
+          onChanged: onChanged,
           inputFormatters: inputFormatters ?? [],
           textAlign: textAlign ?? TextAlign.start,
           textAlignVertical: textAlignVertical,
@@ -79,7 +81,7 @@ class InputsReutilizableWidgets extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: CupertinoColors.activeBlue,
+                    color: Color(0xFFFF4929),
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(5),
