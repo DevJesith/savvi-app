@@ -7,6 +7,10 @@ final loginFormKeyProvider = Provider.autoDispose(
   (ref) => GlobalKey<FormState>(),
 );
 
+final registerFormKeyProvider = Provider.autoDispose(
+  (ref) => GlobalKey<FormState>(),
+);
+
 /// Poviders para los controladores de texto
 /// Usamos .autodispose para que se destruyan al salir de la pantalla y no consuman RAM
 final emailControllerProvider = Provider.autoDispose(
