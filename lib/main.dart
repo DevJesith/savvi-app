@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:savvi/core/constants/api_constants.dart';
-import 'package:savvi/core/providers/auth_provider.dart';
 import 'package:savvi/core/theme/app_theme.dart';
+import 'package:savvi/features/auth/presentation/providers/auth_providers.dart';
 import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/splash_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/welcome_screen.dart';
@@ -41,16 +41,6 @@ class SavviApp extends ConsumerWidget {
     // Al usar ref.watch, Riverpod reconstruira este build() automaticamente cuando el valor cambie de false a true.
     final isSplashFinished = ref.watch(splashFinishedProvider);
 
-    // 1. Prioridad Absoluta: Si el Splash NO ha terminado de mostrarse (isSplashFinished es false),
-    // mostramos de manera inmediata la pantalla del Splash (SplashScreen) dentro de un MaterialApp temporal.
-    // Esto evita que el usuario vea el Login o el Dashboard por un instante mientras se inicia la app.
-    if (!isSplashFinished) {
-      return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: SplashScreen(),
-      );
-    }
-
     return MaterialApp(
       title: 'Savvi',
       debugShowCheckedModeBanner: false,
@@ -58,56 +48,59 @@ class SavviApp extends ConsumerWidget {
 
       // LA PUERTA INTELIGENTE (Auth Guard)
       // Usamos .when para manejar los 3 estados del StreamProvider
-      home: authState.when(
-        // CASO A: Tenemos una respuesta de Supabase
-        data: (data) {
-          if (data.session != null) {
-            // Si hay sesion activa, lo dirige al Dashboard
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Hola, ${data.session!.user.email}'),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await ref.read(authRepositoryProvider).signOut();
-                      },
-                      child: Text("Cerrar sesion"),
+      home: !isSplashFinished
+          ? const SplashScreen()
+          : authState.when(
+              // CASO A: Tenemos una respuesta de Supabase
+              data: (data) {
+                if (data.session != null) {
+                  // Si hay sesion activa, lo dirige al Dashboard
+                  return Scaffold(
+                    body: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Hola, ${data.session!.user.email}'),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await ref.read(authRepositoryProvider).signOut();
+                            },
+                            child: Text("Cerrar sesion"),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  );
+                }
+
+                // ESCENARIO 2: Usuario deslogueado
+                // Aqui llamamos al otro provider
+                final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
+
+                return hasSeenOnboarding.when(
+                  data: (seen) {
+                    if (seen) {
+                      // Ya lo vio -> va directo al Login
+                      return const LoginScreen();
+                    } else {
+                      // Es nuevo -> Va al Onboarding (welcome)
+                      return const WelcomeScreen();
+                    }
+                  },
+                  loading: () => const SplashScreen(),
+                  error: (_, __) =>
+                      const LoginScreen(), // Por si falla, mejor mandarlo al login
+                );
+              },
+              // TODO: CASO B: Si el splash terminó pero Supabase sigue cargando,
+              // simplemente mantenemos el Splash o un fondo neutro.
+              loading: () => SplashScreen(),
+              // CASO C: Algo exploto (ej. No hay internet)
+              error: (err, stack) => Scaffold(
+                body: Center(child: Text("Error de conexion; $err")),
               ),
-            );
-          }
-
-          // ESCENARIO 2: Usuario deslogueado
-          // Aqui llamamos al otro provider
-          final hasSeenOnboarding = ref.watch(hasSeenOnboardingProvider);
-
-          return hasSeenOnboarding.when(
-            data: (seen) {
-              if (seen) {
-                // Ya lo vio -> va directo al Login
-                return const LoginScreen();
-              } else {
-                // Es nuevo -> Va al Onboarding (welcome)
-                return const WelcomeScreen();
-              }
-            },
-            loading: () => const SplashScreen(),
-            error: (_, __) =>
-                const LoginScreen(), // Por si falla, mejor mandarlo al login
-          );
-        },
-        // TODO: CASO B: Si el splash terminó pero Supabase sigue cargando,
-        // simplemente mantenemos el Splash o un fondo neutro.
-        loading: () => SplashScreen(),
-        // CASO C: Algo exploto (ej. No hay internet)
-        error: (err, stack) =>
-            Scaffold(body: Center(child: Text("Error de conexion; $err"))),
-      ),
+            ),
     );
   }
 }
