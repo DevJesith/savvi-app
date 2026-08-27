@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:savvi/core/constants/api_constants.dart';
-import 'package:savvi/core/providers/auth_provider.dart';
-import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
+import 'package:savvi/features/auth/presentation/providers/auth_providers.dart';
+// import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
 import 'package:savvi/shared/widgets/onboardingContent_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
