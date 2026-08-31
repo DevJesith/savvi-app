@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:savvi/features/auth/presentation/providers/auth_providers.dart';
 import 'package:savvi/features/auth/presentation/providers/login_providers.dart';
-import 'package:savvi/features/auth/presentation/screens/user_profiling/register_screen.dart';
+import 'package:savvi/features/auth/presentation/screens/user_profiling/user_profiling_flow_screen.dart';
 import 'package:savvi/shared/widgets/inputs_reutilizable_widgets.dart';
 
 class LoginScreen extends ConsumerWidget {
@@ -387,7 +387,7 @@ class LoginScreen extends ConsumerWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => RegisterScreen(),
+                              builder: (_) => const UserProfilingFlowScreen(),
                             ),
                           );
                         },

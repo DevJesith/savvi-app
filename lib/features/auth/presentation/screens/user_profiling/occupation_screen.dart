@@ -1,25 +1,32 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:savvi/features/auth/presentation/providers/profiling_provider.dart';
 import 'package:savvi/features/auth/presentation/providers/register_providers.dart';
-import 'package:savvi/features/auth/presentation/screens/user_profiling/usageIntent_screen.dart';
+
 import 'package:savvi/shared/widgets/occupationCard_widget.dart';
 
-class OccupationScreen extends ConsumerWidget {
-  OccupationScreen({super.key});
+class OccupationStepView extends ConsumerStatefulWidget {
+  final PageController pageController;
+  const OccupationStepView({super.key, required this.pageController});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<OccupationStepView> createState() => _OccupationStepViewState();
+}
+
+class _OccupationStepViewState extends ConsumerState<OccupationStepView> {
+
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(registerProvider);
     final notifier = ref.read(registerProvider.notifier);
 
-    // Definimios las opciones de la ocupacion
+    // Opciones a elegir
     final List<OccupationOption> options = [
       OccupationOption(
         title: 'Estudiante',
-        description: 'En formacion academica',
+        description: 'En formación académica',
         icon: Icons.school_outlined,
       ),
       OccupationOption(
@@ -28,77 +35,61 @@ class OccupationScreen extends ConsumerWidget {
         icon: Icons.work_outline,
       ),
       OccupationOption(
-        title: 'Autonomo / Freenlace',
+        title: 'Autónomo / Freelance',
         description: 'Trabajo independiente',
         icon: Icons.person_outline,
       ),
       OccupationOption(
-        title: 'Jubiliado',
+        title: 'Jubilado',
         description: 'Retirado de la vida laboral',
         icon: Icons.bed_outlined,
       ),
       OccupationOption(
         title: 'Otros',
-        description: 'Desempleado o situaction diverssa',
+        description: 'Situación diversa o desempleado',
         icon: Icons.more_horiz_outlined,
       ),
     ];
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F6F5),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: const BackButton(color: Colors.black),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const LinearProgressIndicator(
-                  value: 0.75,
-                  backgroundColor: Color(0xFFE2E8F0),
-                  color: Color(0xFFFF4929),
-                  minHeight: 6,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-            
-                const SizedBox(height: 35),
-            
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+
                 Text(
-                  "¿A que te dedicas?",
+                  "¿A qué te dedicas?",
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
+                    color: const Color(0xFF0F172A),
                   ),
                 ),
-            
+
                 const SizedBox(height: 15),
-            
+
                 Text(
-                  "Selecciona la opcion que mejor describa tu situacion laboral actual para personalizar tu experiencia.",
+                  "Selecciona la opción que mejor describa tu situación laboral para personalizar tu experiencia.",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
-                    fontWeight: FontWeight.normal,
+                    color: const Color(0xFF64748B),
                   ),
                 ),
-            
+
                 const SizedBox(height: 30),
-            
-                // --- LISTA DE OPCIONES ---
+
+                // --- LISTA DE OPCIONES (Iteracion Limpia) ---
                 for (final option in options)
                   OccupationcardWidget(
                     option: option,
                     isSelected: state.selectedOccupation == option.title,
                     ontap: () => notifier.updateOccupation(option.title),
                   ),
-            
-                const SizedBox(height: 16),
-            
+
+                const SizedBox(height: 24),
+
                 // Boton de siguiente
                 SizedBox(
                   width: double.infinity,
@@ -107,11 +98,9 @@ class OccupationScreen extends ConsumerWidget {
                     onPressed: state.selectedOccupation.isEmpty
                         ? null
                         : () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => UsageintentScreen(),
-                              ),
+                            widget.pageController.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
                             );
                           },
                     style: ElevatedButton.styleFrom(
@@ -132,9 +121,7 @@ class OccupationScreen extends ConsumerWidget {
                             fontSize: 16,
                           ),
                         ),
-            
                         const SizedBox(width: 8),
-            
                         const Icon(Icons.arrow_forward, size: 18),
                       ],
                     ),
@@ -143,8 +130,6 @@ class OccupationScreen extends ConsumerWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
+        );
+      }
 }
