@@ -54,38 +54,13 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
     final notifier = ref.read(registerProvider.notifier);
     final registerKey = ref.watch(registerFormKeyProvider);
 
-    // Lógica de dominio para la edad (No se muestra en pantalla, se usa para logica)
-    final tempUser = UserEntity(
-      name: state.name,
-      lastname: state.lastname,
-      email: state.email,
-      birthDate: state.birthDate,
-    );
-    final ageDisplay = tempUser.age?.toString() ?? '--';
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Crea tu cuenta",
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              color: const Color(0xFF0F172A),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          Text(
-            "Completa tus datos personales para continuar con la configuración de tu perfil financiero.",
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              color: const Color(0xFF64748B),
-            ),
-          ),
+          // Header informativo
+          const _RegisterHeader(),
 
           const SizedBox(height: 32),
 
@@ -101,23 +76,6 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
                   onChanged: notifier.updateName,
                   validator: (value) =>
                       value!.isEmpty ? 'Campo requerido' : null,
-                  decoration: InputDecoration(
-                    hintText: 'Ej. Juan',
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: CupertinoColors.inactiveGray,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0x8AFF4929),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
                 ),
 
                 const SizedBox(height: 20),
@@ -129,23 +87,6 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
                   onChanged: notifier.updateLastname,
                   validator: (value) =>
                       value!.isEmpty ? 'Campo requerido' : null,
-                  decoration: InputDecoration(
-                    hintText: 'Ej. Perez',
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: CupertinoColors.inactiveGray,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0x8AFF4929),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
                 ),
 
                 const SizedBox(height: 20),
@@ -207,24 +148,6 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
                   onChanged: notifier.updateEmail,
                   validator: (value) =>
                       !value!.contains('@') ? 'Email inválido' : null,
-                  decoration: InputDecoration(
-                    hintText: 'ejemplo@correo.com',
-                    prefixIcon: Icon(Icons.mail_outline),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: CupertinoColors.inactiveGray,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0x8AFF4929),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
                 ),
 
                 const SizedBox(height: 20),
@@ -237,33 +160,6 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
                   obscuredText: state.isObscure,
                   validator: (value) =>
                       value!.length < 8 ? 'Mínimo 8 caracteres' : null,
-                  decoration: InputDecoration(
-                    hintText: 'Mínimo 8 caracteres',
-                    prefixIcon: const Icon(Icons.lock_outline, size: 20),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        state.isObscure
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        size: 20,
-                      ),
-                      onPressed: notifier.toggleObscure,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: CupertinoColors.inactiveGray,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0x8AFF4929),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -272,85 +168,134 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
           const SizedBox(height: 32),
 
           // --- INFO CARD SEGURIDAD ---
-          _buildSecurityCard(),
+          const _SecurityInfoCard(),
 
           const SizedBox(height: 32),
 
           // --- BOTON ACCION ---
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: state.isLoading
-                  ? null // deshabilita el boton mientras carga
-                  : () async {
-                      if (registerKey.currentState!.validate()) {
-                        try {
-                          // 1. Guardamos la contraseña en el estado
-                          notifier.updatePassword(_passwordController.text);
+          _SubmitButton(
+            isLoading: state.isLoading,
+            onPressed: () async {
+              if (registerKey.currentState!.validate()) {
+                try {
+                  // 1. Guardamos la contraseña en el estado
+                  notifier.updatePassword(_passwordController.text);
 
-                          // 2. Disparamos el registro en Supabase
-                          await notifier.startSignUp();
+                  // 2. Disparamos el registro en Supabase
+                  await notifier.startSignUp();
 
-                          // 3. Avanzamos a la siguiente pantalla SOLO si fue exitoso
-                          if (context.mounted) {
-                            widget.pageController.nextPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(e.toString()),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        }
-                      }
-                    },
-
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF4929),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-
-              // Boton de continuar
-              child: state.isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
+                  // 3. Avanzamos a la siguiente pantalla SOLO si fue exitoso
+                  if (context.mounted) {
+                    widget.pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                        backgroundColor: Colors.red,
                       ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Continuar",
-                          style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.arrow_forward, size: 18),
-                      ],
-                    ),
-            ),
+                    );
+                  }
+                }
+              }
+            },
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildSecurityCard() {
+class _RegisterHeader extends StatelessWidget {
+  const _RegisterHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Crea tu cuenta",
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 32,
+            fontWeight: FontWeight.w800,
+            color: const Color(0xFF0F172A),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          "Completa tus datos personales para continuar con la configuración de tu perfil financiero.",
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 16,
+            color: const Color(0xFF64748B),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SubmitButton extends StatelessWidget {
+  final bool isLoading;
+  final VoidCallback? onPressed;
+
+  const _SubmitButton({required this.isLoading, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: ElevatedButton(
+        onPressed: isLoading
+            ? null
+            : onPressed, // Deshabilita el botón mientras carga
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFFF4929),
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: const Color(
+            0x8AFF4929,
+          ), // Mantiene tu color corporativo con opacidad en el loading
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: isLoading
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Continuar",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward, size: 18),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
+class _SecurityInfoCard extends StatelessWidget {
+  const _SecurityInfoCard(); // El constructor const para máxima eficiencia
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
