@@ -35,7 +35,7 @@ class InputsReutilizableWidgets extends StatelessWidget {
     this.inputFormatters,
     this.textAlign,
     this.textAlignVertical,
-    this.onChanged
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -70,23 +70,35 @@ class InputsReutilizableWidgets extends StatelessWidget {
           decoration:
               decoration ??
               InputDecoration(
-                border: OutlineInputBorder(),
+                isDense:
+                    true, // Hace el input mas compacto verticalmente si no hay iconos
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                border: const OutlineInputBorder(),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: CupertinoColors.inactiveGray,
-                    width: 2,
+                    width: 1,
                   ),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color(0xFFFF4929),
+                  borderSide: const BorderSide(
+                    color: Color(0xFFFF4929), 
                     width: 2,
                   ),
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                suffixIcon: suffixIcon,
-                prefixIcon: prefixIcon,
+                errorBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.red, width: 1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.red, width: 2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
         ),
       ],
