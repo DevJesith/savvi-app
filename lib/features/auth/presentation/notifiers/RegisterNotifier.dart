@@ -40,6 +40,9 @@ class Registernotifier extends Notifier<Registerstate> {
   Future<void> startSignUp() async {
     state = state.copyWith(isLoading: true);
     try {
+      // Inicia
+      final start = DateTime.now();
+
       // Creamos una entidad sin password
       final userEntity = UserEntity(
         name: state.name,
@@ -55,6 +58,11 @@ class Registernotifier extends Notifier<Registerstate> {
             password: state.password, // Usamos la del estado
           );
 
+      // finalizacion
+      final end = DateTime.now();
+      final duration = end.difference(start);
+      print("⏱️ Tiempo de respuesta registro: ${duration.inMilliseconds} ms");
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
@@ -66,6 +74,9 @@ class Registernotifier extends Notifier<Registerstate> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
+      // Inicio
+      final start = DateTime.now();
+
       // 1. Verificamos el codigo (esto loguea al usuario automaticamente si es correcto)
       await ref
           .read(authRepositoryProvider)
@@ -97,6 +108,13 @@ class Registernotifier extends Notifier<Registerstate> {
               occupation: state.selectedOccupation,
               usageIntent: state.selectedUsageIntent,
             );
+
+        // Finalizacion
+        final end = DateTime.now();
+        final duration = end.difference(start);
+        print(
+          "⏱️ Tiempo de respuesta verificación: ${duration.inMilliseconds} ms",
+        );
 
         state = state.copyWith(isLoading: false);
       }

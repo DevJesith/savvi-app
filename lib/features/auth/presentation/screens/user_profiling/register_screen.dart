@@ -281,32 +281,36 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () async {
-                if (registerKey.currentState!.validate()) {
-                  try {
-                    // 1. Guardamos la contraseña en del estado
-                    notifier.updatePassword(_passwordController.text);
+              onPressed: state.isLoading
+                  ? null // deshabilita el boton mientras carga
+                  : () async {
+                      if (registerKey.currentState!.validate()) {
+                        try {
+                          // 1. Guardamos la contraseña en el estado
+                          notifier.updatePassword(_passwordController.text);
 
-                    // 2. Disparamos el registro (manda el codigo al registro)
-                    await notifier.startSignUp();
+                          // 2. Disparamos el registro en Supabase
+                          await notifier.startSignUp();
 
-                    // 3. Navegamos a la siguiente pantalla
-                    if (context.mounted) {
-                      widget.pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(e.toString()),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                }
-              },
+                          // 3. Avanzamos a la siguiente pantalla SOLO si fue exitoso
+                          if (context.mounted) {
+                            widget.pageController.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(e.toString()),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    },
 
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF4929),
@@ -317,19 +321,28 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
               ),
 
               // Boton de continuar
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Continuar",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.bold,
+              child: state.isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Continuar",
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.arrow_forward, size: 18),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward, size: 18),
-                ],
-              ),
             ),
           ),
         ],
