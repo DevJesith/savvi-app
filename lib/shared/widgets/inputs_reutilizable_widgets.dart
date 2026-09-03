@@ -70,6 +70,8 @@ class InputsReutilizableWidgets extends StatelessWidget {
           decoration:
               decoration ??
               InputDecoration(
+                prefixIcon: prefixIcon,
+                suffixIcon: suffixIcon,
                 isDense:
                     true, // Hace el input mas compacto verticalmente si no hay iconos
                 contentPadding: const EdgeInsets.symmetric(
