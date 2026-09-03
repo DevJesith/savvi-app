@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:savvi/features/auth/domain/entities/user_entity.dart';
 import 'package:savvi/features/auth/presentation/providers/login_providers.dart';
 
 import 'package:savvi/features/auth/presentation/providers/register_providers.dart';
@@ -29,11 +28,16 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
-    _lastNameController = TextEditingController();
-    _emailController = TextEditingController();
-    _passwordController = TextEditingController();
-    _birthDateController = TextEditingController();
+    final registerState = ref.read(registerProvider);
+    _nameController = TextEditingController(text: registerState.name);
+    _lastNameController = TextEditingController(text: registerState.lastname);
+    _emailController = TextEditingController(text: registerState.email);
+    _passwordController = TextEditingController(text: registerState.password);
+    _birthDateController = TextEditingController(
+      text: registerState.birthDate != null
+          ? DateFormat('dd/MM/yyyy').format(registerState.birthDate!)
+          : '',
+    );
   }
 
   // Los cierra/libera cuando el widget se destruye, sirve para que sea eficiente la app y no tenga
@@ -96,7 +100,7 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
                   onTap: () async {
                     final date = await showDatePicker(
                       context: context,
-                      initialDate: DateTime(2000),
+                      initialDate: state.birthDate ?? DateTime(2000),
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
                     );
@@ -160,6 +164,15 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
                   obscuredText: state.isObscure,
                   validator: (value) =>
                       value!.length < 8 ? 'Mínimo 8 caracteres' : null,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      state.isObscure
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: const Color(0xFF64748B),
+                    ),
+                    onPressed: notifier.toggleObscure,
+                  ),
                 ),
               ],
             ),
