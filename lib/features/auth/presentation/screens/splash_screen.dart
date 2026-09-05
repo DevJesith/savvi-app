@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:savvi/core/constants/app_colors_constants.dart';
 import 'package:savvi/features/auth/presentation/providers/auth_providers.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -81,7 +82,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0F172A),
+                          color: AppColorsConstants.textPrimary,
                         ),
                       ),
 
@@ -121,7 +122,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFFFF4929),
+                              color: AppColorsConstants.primary,
                             ),
                           ),
                         ],
@@ -134,7 +135,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         child: LinearProgressIndicator(
                           value: _progress,
                           backgroundColor: Colors.grey[200],
-                          color: const Color(0xFFFF4929),
+                          color: AppColorsConstants.primary,
                           minHeight: 8,
                           borderRadius: BorderRadius.circular(10),
                         ),

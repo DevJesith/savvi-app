@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:savvi/core/constants/api_constants.dart';
 import 'package:savvi/features/auth/presentation/providers/auth_providers.dart';
 // import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
-import 'package:savvi/shared/widgets/onboardingContent_widget.dart';
+import 'package:savvi/shared/widgets/onboarding_content_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Notifier para manejar el índice de página
@@ -20,13 +20,32 @@ final pageIndexProvider = NotifierProvider<PageIndexNotifier, int>(
   PageIndexNotifier.new,
 );
 
-class WelcomeScreen extends ConsumerWidget {
-  const WelcomeScreen({super.key});
+class WelcomeScreenOnboarding extends ConsumerStatefulWidget {
+  const WelcomeScreenOnboarding({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final pageController = PageController();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _WelcomeScreenOnboardingState();
+}
 
+class _WelcomeScreenOnboardingState
+    extends ConsumerState<WelcomeScreenOnboarding> {
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -35,40 +54,40 @@ class WelcomeScreen extends ConsumerWidget {
             Expanded(
               child: PageView(
                 // Es el volante que nos permite mover las paginas por codigo
-                controller: pageController,
+                controller: _pageController,
                 // Cada vez que el usuario desliza el dedo, avisamos a Riverpod
                 onPageChanged: (index) {
                   ref.read(pageIndexProvider.notifier).setPage(index);
                 },
                 physics: NeverScrollableScrollPhysics(),
                 children: [
-                  OnboardingcontentWidget(
+                  OnboardingContentWidget(
                     imagePath: 'assets/Onboarding - gastos.png',
                     title: 'Controla tus gastos',
                     subtitle:
                         'Registra cada transacción en segundos y visualiza hacia dónde se va tu dinero con gráficos inteligentes',
                     buttonText: 'Siguiente',
                     onButtonPressed: () {
-                      pageController.nextPage(
+                      _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
                       );
                     },
                   ),
-                  OnboardingcontentWidget(
+                  OnboardingContentWidget(
                     imagePath: 'assets/Onboarding - metas.png',
                     title: 'Alcanza tus metas',
                     subtitle:
                         'Crea objetivos de ahorro personalizados y visualiza tu progreso con herramientas inteligentes',
                     buttonText: 'Siguiente',
                     onButtonPressed: () {
-                      pageController.nextPage(
+                      _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
                       );
                     },
                   ),
-                  OnboardingcontentWidget(
+                  OnboardingContentWidget(
                     imagePath: 'assets/Onboarding - graficas.png',
                     title: 'Visualiza tus reportes',
                     subtitle:

@@ -85,7 +85,7 @@ class SavviApp extends ConsumerWidget {
                       return const LoginScreen();
                     } else {
                       // Es nuevo -> Va al Onboarding (welcome)
-                      return const WelcomeScreen();
+                      return const WelcomeScreenOnboarding();
                     }
                   },
                   loading: () => const SplashScreen(),
