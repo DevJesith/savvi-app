@@ -1,9 +1,8 @@
-import 'package:savvi/features/auth/domain/entities/user_entity.dart';
 
 /// Clase de estado inmutable para la vista de Registro.
-class Registerstate {
+class RegisterState {
   final bool isLoading;
-  final String? erroMessage;
+  final String? errorMessage;
   final String name;
   final String lastname;
   final DateTime? birthDate;
@@ -16,9 +15,9 @@ class Registerstate {
   final String selectedOccupation;
   final String selectedUsageIntent;
 
-  Registerstate({
+  RegisterState({
     this.isLoading = false,
-    this.erroMessage,
+    this.errorMessage,
     this.name = '',
     this.lastname = '',
     this.birthDate,
@@ -33,7 +32,7 @@ class Registerstate {
   });
 
   // Metodo copyWith para respetar la inmutabilidad
-  Registerstate copyWith({
+  RegisterState copyWith({
     bool? isLoading,
     String? errorMessage,
     String? name,
@@ -48,9 +47,9 @@ class Registerstate {
     String? selectedOccupation,
     String? selectedUsageIntent,
   }) {
-    return Registerstate(
+    return RegisterState(
       isLoading: isLoading ?? this.isLoading,
-      erroMessage: errorMessage ?? this.erroMessage,
+      errorMessage: errorMessage ?? this.errorMessage,
       name: name ?? this.name,
       lastname: lastname ?? this.lastname,
       birthDate: birthDate ?? this.birthDate,

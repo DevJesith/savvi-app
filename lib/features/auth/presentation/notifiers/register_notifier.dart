@@ -1,12 +1,12 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:savvi/features/auth/domain/entities/user_entity.dart';
 import 'package:savvi/features/auth/presentation/providers/auth_providers.dart';
-import 'package:savvi/features/auth/presentation/states/RegisterState.dart';
+import 'package:savvi/features/auth/presentation/states/register_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Registernotifier extends Notifier<Registerstate> {
+class RegisterNotifier extends Notifier<RegisterState> {
   @override
-  Registerstate build() => Registerstate();
+  RegisterState build() => RegisterState();
 
   // Metodos para actualizar el estado
   void updateName(String value) => state = state.copyWith(name: value);
