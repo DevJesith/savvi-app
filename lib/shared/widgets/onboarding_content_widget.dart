@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:savvi/core/constants/app_colors_constants.dart';
 import 'package:savvi/features/auth/presentation/screens/welcome_screen.dart';
 
-class OnboardingcontentWidget extends ConsumerWidget {
+class OnboardingContentWidget extends ConsumerWidget {
   final String imagePath;
   final String title;
   final String subtitle;
@@ -11,7 +12,7 @@ class OnboardingcontentWidget extends ConsumerWidget {
   final VoidCallback onButtonPressed;
   final VoidCallback? onSkipPressed;
 
-  const OnboardingcontentWidget({
+  const OnboardingContentWidget({
     super.key,
     required this.imagePath,
     required this.title,
@@ -42,7 +43,7 @@ class OnboardingcontentWidget extends ConsumerWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFFFF4929),
+                  color: AppColorsConstants.primary,
                 ),
               ),
             ),
@@ -63,7 +64,7 @@ class OnboardingcontentWidget extends ConsumerWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 30,
                       fontWeight: FontWeight.w800,
-                      color: const Color(0xFF0F172A),
+                      color: AppColorsConstants.textPrimary,
                     ),
                   ),
 
@@ -74,7 +75,7 @@ class OnboardingcontentWidget extends ConsumerWidget {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
-                      color: const Color(0xFF0F172A),
+                      color: AppColorsConstants.textPrimary,
                     ),
                   ),
 
@@ -94,7 +95,7 @@ class OnboardingcontentWidget extends ConsumerWidget {
                         margin: const EdgeInsets.symmetric(horizontal: 4),
                         decoration: BoxDecoration(
                           color: isActive
-                              ? const Color(0xFFFF4929)
+                              ? AppColorsConstants.primary
                               : const Color(0x33FF4929),
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -112,7 +113,7 @@ class OnboardingcontentWidget extends ConsumerWidget {
             child: ElevatedButton(
               onPressed: onButtonPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF4929),
+                backgroundColor: AppColorsConstants.primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),

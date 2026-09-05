@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:savvi/core/constants/app_colors_constants.dart';
 
 class UsageOption {
   final String title;
@@ -13,12 +14,12 @@ class UsageOption {
   });
 }
 
-class UsageintentcardWidget extends StatelessWidget {
+class UsageIntentCardWidget extends StatelessWidget {
   final UsageOption option;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const UsageintentcardWidget({
+  const UsageIntentCardWidget({
     required this.option,
     required this.isSelected,
     required this.onTap,
@@ -38,7 +39,7 @@ class UsageintentcardWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isSelected
-                ? const Color(0xFFFF4929)
+                ? AppColorsConstants.primary
                 : const Color(0xFFE2E8F0),
             width: isSelected ? 2 : 1,
           ),
@@ -50,7 +51,7 @@ class UsageintentcardWidget extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? const Color(0xFFFF4929)
+                    ? AppColorsConstants.primary
                     : const Color(0xFFF1F5F9),
                 shape: BoxShape.circle,
               ),
@@ -68,7 +69,7 @@ class UsageintentcardWidget extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF0F172A),
+                color: AppColorsConstants.textPrimary,
               ),
             ),
 

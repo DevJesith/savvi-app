@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:savvi/core/constants/app_colors_constants.dart';
 
 class OccupationOption {
   final String title;
@@ -13,12 +14,12 @@ class OccupationOption {
   });
 }
 
-class OccupationcardWidget extends StatelessWidget {
+class OccupationCardWidget extends StatelessWidget {
   final OccupationOption option;
   final bool isSelected;
   final VoidCallback ontap;
 
-  const OccupationcardWidget({
+  const OccupationCardWidget({
     required this.option,
     required this.isSelected,
     required this.ontap,
@@ -37,7 +38,7 @@ class OccupationcardWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isSelected
-                ? const Color(0xFFFF4929)
+                ? AppColorsConstants.primary
                 : const Color(0xFFE2E8F0),
             width: isSelected ? 2 : 1,
           ),
@@ -50,13 +51,13 @@ class OccupationcardWidget extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? const Color(0xFFFF4929)
+                    ? AppColorsConstants.primary
                     : const Color(0xFFFFF7F5),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
                 option.icon,
-                color: isSelected ? Colors.white : const Color(0xFFFF4929),
+                color: isSelected ? Colors.white : AppColorsConstants.primary,
                 size: 28,
               ),
             ),
@@ -73,7 +74,7 @@ class OccupationcardWidget extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF0F172A),
+                      color: AppColorsConstants.textPrimary,
                     ),
                   ),
 
@@ -92,7 +93,7 @@ class OccupationcardWidget extends StatelessWidget {
 
             // Indicaador check o flecha
             if (isSelected)
-              const Icon(Icons.check_circle, color: Color(0xFFFF4929), size: 20)
+              const Icon(Icons.check_circle, color: AppColorsConstants.primary, size: 20)
             else
               const Icon(
                 Icons.arrow_forward_ios_rounded,

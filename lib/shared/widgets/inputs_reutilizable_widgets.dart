@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:savvi/core/constants/app_colors_constants.dart';
 
 class InputsReutilizableWidgets extends StatelessWidget {
   final TextEditingController controller;
@@ -88,7 +89,7 @@ class InputsReutilizableWidgets extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(
-                    color: Color(0xFFFF4929), 
+                    color: AppColorsConstants.primary, 
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(12),
