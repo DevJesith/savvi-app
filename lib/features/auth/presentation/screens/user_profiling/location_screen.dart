@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:savvi/core/constants/app_colors_constants.dart';
 import 'package:savvi/features/auth/presentation/providers/register_providers.dart';
 
 class LocationStepView extends ConsumerWidget {
@@ -28,7 +29,7 @@ class LocationStepView extends ConsumerWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF0F172A),
+              color: AppColorsConstants.textPrimary,
             ),
           ),
 
@@ -122,7 +123,7 @@ class _LocationHeader extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.w800,
-            color: const Color(0xFF0F172A),
+            color: AppColorsConstants.textPrimary,
           ),
         ),
 
@@ -172,7 +173,7 @@ class _CountrySelectorCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
             border: Border.all(
               color: hasSelected
-                  ? const Color(0xFFFF4929)
+                  ? AppColorsConstants.primary
                   : const Color(0xFFFFE4E0),
               width: 1.5,
             ),
@@ -192,7 +193,7 @@ class _CountrySelectorCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
                     color: hasSelected
-                        ? const Color(0xFF0F172A)
+                        ? AppColorsConstants.textPrimary
                         : const Color(0xFF64748B),
                     fontWeight: hasSelected
                         ? FontWeight.w600
@@ -227,7 +228,7 @@ class _NextButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFF4929),
+          backgroundColor: AppColorsConstants.primary,
           foregroundColor: Colors.white,
           disabledBackgroundColor: Colors.grey[300],
           shape: RoundedRectangleBorder(

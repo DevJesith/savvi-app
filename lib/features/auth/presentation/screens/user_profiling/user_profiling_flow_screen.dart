@@ -5,7 +5,7 @@ import 'package:savvi/shared/widgets/profiling_progress_widgets.dart';
 import 'package:savvi/features/auth/presentation/screens/user_profiling/register_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/user_profiling/location_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/user_profiling/occupation_screen.dart';
-import 'package:savvi/features/auth/presentation/screens/user_profiling/usageIntent_screen.dart';
+import 'package:savvi/features/auth/presentation/screens/user_profiling/usage_intent_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/user_profiling/verification_screen.dart';
 
 class UserProfilingFlowScreen extends ConsumerStatefulWidget {
@@ -24,7 +24,7 @@ class _UserProfilingFlowScreenState extends ConsumerState<UserProfilingFlowScree
     _pageController = PageController();
     // Restablecemos al primer paso al iniciar
     Future.microtask(() {
-      ref.read(currentProfilingStepProvider.notifier).state = ProfilingStep.register;
+      ref.read(currentProfilingStepProvider.notifier).setStep(ProfilingStep.register);
     });
   }
 
@@ -76,7 +76,7 @@ class _UserProfilingFlowScreenState extends ConsumerState<UserProfilingFlowScree
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(), // Evita deslizamientos manuales accidentales
                 onPageChanged: (index) {
-                  ref.read(currentProfilingStepProvider.notifier).state = flow[index];
+                  ref.read(currentProfilingStepProvider.notifier).setStep(flow[index]);
                 },
                 children: [
                   RegisterStepView(pageController: _pageController),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:savvi/core/constants/app_colors_constants.dart';
 import 'package:savvi/features/auth/presentation/providers/register_providers.dart';
 
-import 'package:savvi/shared/widgets/occupationCard_widget.dart';
+import 'package:savvi/shared/widgets/occupation_card_widget.dart';
 
 // 1. Lista de opciones estatica fuera del build para optimizar memoria
 final List<OccupationOption> _occupationOptions = [
@@ -56,7 +57,7 @@ class OccupationStepView extends ConsumerWidget {
 
           // --- LISTA DE OPCIONES ---
           for (final option in _occupationOptions)
-            OccupationcardWidget(
+            OccupationCardWidget(
               option: option,
               isSelected: state.selectedOccupation == option.title,
               ontap: () => notifier.updateOccupation(option.title),
@@ -91,7 +92,7 @@ class _OccupationHeader extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 30,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF0F172A),
+            color: AppColorsConstants.textPrimary,
           ),
         ),
         const SizedBox(height: 15),
@@ -120,7 +121,7 @@ class _NextButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFF4929),
+          backgroundColor: AppColorsConstants.primary,
           foregroundColor: Colors.white,
           disabledBackgroundColor: Colors.grey[300],
           shape: RoundedRectangleBorder(

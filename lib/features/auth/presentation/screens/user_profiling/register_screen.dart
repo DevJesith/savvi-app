@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:savvi/core/constants/app_colors_constants.dart';
 import 'package:savvi/features/auth/presentation/providers/login_providers.dart';
 
 import 'package:savvi/features/auth/presentation/providers/register_providers.dart';
@@ -236,7 +237,7 @@ class _RegisterHeader extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.w800,
-            color: const Color(0xFF0F172A),
+            color: AppColorsConstants.textPrimary,
           ),
         ),
         const SizedBox(height: 12),
@@ -268,7 +269,7 @@ class _SubmitButton extends StatelessWidget {
             ? null
             : onPressed, // Deshabilita el botón mientras carga
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFF4929),
+          backgroundColor: AppColorsConstants.primary,
           foregroundColor: Colors.white,
           disabledBackgroundColor: const Color(
             0x8AFF4929,
@@ -320,7 +321,7 @@ class _SecurityInfoCard extends StatelessWidget {
         children: [
           const Icon(
             Icons.verified_user_outlined,
-            color: Color(0xFFFF4929),
+            color: AppColorsConstants.primary,
             size: 24,
           ),
           const SizedBox(width: 16),
