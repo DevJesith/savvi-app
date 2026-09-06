@@ -22,6 +22,12 @@ abstract class AuthRepository {
     required String password,
   });
 
+  // Funcion para enviar mensaje de restablecer contraseña
+  Future<void> sendPasswordResetEmail({required String email});
+
+  // Restablecer contraseña
+  Future<void> updatePassword({required String newPassword});
+
   Future<void> verifyOTP({required String email, required String token});
 
   Future<void> updateProfile({

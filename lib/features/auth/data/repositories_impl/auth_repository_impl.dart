@@ -61,6 +61,42 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    try {
+
+      // Solicitamos la funcion de supbase de restablecer contraseña por medio de email
+      await _supabase.auth.resetPasswordForEmail(
+        email.trim().toLowerCase(),
+        redirectTo: 'io.supabase.flutter://callback',
+      );
+    } on AuthException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(
+        'Error al enviar el correo de recuperacion. '
+        'Revisa tu conexion a internet.',
+      );
+    }
+  }
+
+
+  @override
+  Future<void> updatePassword({required String newPassword}) async {
+    try {
+
+      // Actualizamos el registro con la contraseña nueva
+      await _supabase.auth.updateUser(UserAttributes(password: newPassword));
+    } on AuthException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(
+        'Error al actualizar la contraseña. '
+        'Revisa tu conexion a internet',
+      );
+    }
+  }
+
+  @override
   Future<void> registerWithEmail({
     required UserEntity user,
     required String password,

@@ -4,6 +4,7 @@ import 'package:savvi/core/constants/api_constants.dart';
 import 'package:savvi/core/theme/app_theme.dart';
 import 'package:savvi/features/auth/presentation/providers/auth_providers.dart';
 import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
+import 'package:savvi/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/splash_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -53,6 +54,11 @@ class SavviApp extends ConsumerWidget {
           : authState.when(
               // CASO A: Tenemos una respuesta de Supabase
               data: (data) {
+
+                if (data.event == AuthChangeEvent.passwordRecovery) {
+                  return const ResetPasswordScreen();
+                }
+                
                 if (data.session != null) {
                   // Si hay sesion activa, lo dirige al Dashboard
                   return Scaffold(

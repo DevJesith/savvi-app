@@ -203,7 +203,7 @@ class _LoginForm extends ConsumerWidget {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: () {
-                // TODO: Ruta para recuperación de contraseña
+                _showForgotPasswordDialog(context, ref);
               },
               child: Text(
                 '¿Olvidaste tu contraseña?',
@@ -299,6 +299,147 @@ class _LoginForm extends ConsumerWidget {
       ),
     );
   }
+}
+
+Future<void> _showForgotPasswordDialog(
+  BuildContext context,
+  WidgetRef ref,
+) async {
+  final parentContext = context;
+  final emailController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  var isLoading = false;
+
+  await showDialog<void>(
+    context: parentContext,
+    builder: (dialogContext) {
+      return StatefulBuilder(
+        builder: (builderContext, setState) {
+          return AlertDialog(
+            title: const Text('Recuperar contraseña'),
+            content: Form(
+              key: formKey,
+              child: TextFormField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Correo electrónico',
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Ingresa tu correo';
+                  }
+
+                  final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+
+                  if (!emailRegex.hasMatch(value.trim())) {
+                    return 'Correo inválido';
+                  }
+
+                  return null;
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: isLoading
+                    ? null
+                    : () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancelar'),
+              ),
+              ElevatedButton(
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        if (!formKey.currentState!.validate()) {
+                          return;
+                        }
+
+                        setState(() {
+                          isLoading = true;
+                        });
+
+                        try {
+                          await ref
+                              .read(authRepositoryProvider)
+                              .sendPasswordResetEmail(
+                                email: emailController.text,
+                              );
+
+                          if (!dialogContext.mounted) {
+                            return;
+                          }
+
+                          Navigator.of(dialogContext).pop();
+
+                          await showDialog<void>(
+                            context: parentContext,
+                            builder: (successContext) {
+                              return AlertDialog(
+                                title: const Text('Correo enviado'),
+                                content: const Text(
+                                  'Si existe una cuenta con ese correo, '
+                                  'recibirás un enlace para recuperar '
+                                  'tu contraseña.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(successContext).pop();
+                                    },
+                                    child: const Text('Entendido'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } catch (e) {
+                          if (!dialogContext.mounted) {
+                            return;
+                          }
+
+                          setState(() {
+                            isLoading = false;
+                          });
+
+                          final message = e.toString().replaceFirst(
+                            'Exception: ',
+                            '',
+                          );
+
+                          await showDialog<void>(
+                            context: dialogContext,
+                            builder: (errorContext) {
+                              return AlertDialog(
+                                title: const Text('Error'),
+                                content: Text(message),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(errorContext).pop();
+                                    },
+                                    child: const Text('Entendido'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      },
+                child: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Enviar'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
 }
 
 class _DividerWithText extends StatelessWidget {
