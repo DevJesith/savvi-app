@@ -63,7 +63,6 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> sendPasswordResetEmail({required String email}) async {
     try {
-
       // Solicitamos la funcion de supbase de restablecer contraseña por medio de email
       await _supabase.auth.resetPasswordForEmail(
         email.trim().toLowerCase(),
@@ -79,11 +78,9 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-
   @override
   Future<void> updatePassword({required String newPassword}) async {
     try {
-
       // Actualizamos el registro con la contraseña nueva
       await _supabase.auth.updateUser(UserAttributes(password: newPassword));
     } on AuthException catch (e) {
@@ -131,6 +128,24 @@ class AuthRepositoryImpl implements AuthRepository {
       throw Exception(e.message);
     } catch (e) {
       throw Exception("Error inesperado al verificar el codigo");
+    }
+  }
+
+  @override
+  Future<void> resendVerificationCode({required String email}) async {
+    try {
+      // Solicitar reenvio de OTP
+      await _supabase.auth.resend(
+        type: OtpType.signup,
+        email: email.trim().toLowerCase(),
+      );
+    } on AuthException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception(
+        'Error al reenviar el codigo.'
+        'Revisa tu conexion a internet',
+      );
     }
   }
 

@@ -124,6 +124,23 @@ class RegisterNotifier extends Notifier<RegisterState> {
     }
   }
 
+  /// Solicita a Supabase que reenvíe el código de confirmación.
+  Future<void> resendCode() async {
+    state = state.copyWith(isResending: true, errorMessage: null);
+
+    try {
+      await ref
+          .read(authRepositoryProvider)
+          .resendVerificationCode(email: state.email);
+
+      state = state.copyWith(isResending: false);
+    } catch (e) {
+      state = state.copyWith(isResending: false, errorMessage: e.toString());
+
+      rethrow;
+    }
+  }
+
   void toggleObscure() {
     state = state.copyWith(isObscure: !state.isObscure);
   }

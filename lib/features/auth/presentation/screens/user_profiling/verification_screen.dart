@@ -86,8 +86,32 @@ class _VerificationStepViewState extends ConsumerState<VerificationStepView> {
 
           // Boton de reenviar
           _ResendButton(
-            onPressed: () {
-              //TODO: Logica de reenviar OTP si es necesario
+            isLoading: state.isResending,
+            onPressed: () async {
+              try {
+                await ref.read(registerProvider.notifier).resendCode();
+
+                if (!context.mounted) {
+                  return;
+                }
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Código reenviado correctamente.'),
+                  ),
+                );
+              } catch (e) {
+                if (!context.mounted) {
+                  return;
+                }
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(e.toString().replaceFirst('Exception: ', '')),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
           ),
         ],
@@ -221,19 +245,28 @@ class _ConfirmButton extends StatelessWidget {
 }
 
 class _ResendButton extends StatelessWidget {
+  final bool isLoading;
   final VoidCallback onPressed;
-  const _ResendButton({required this.onPressed});
+
+  const _ResendButton({required this.isLoading, required this.onPressed});
+
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: onPressed,
-      child: Text(
-        "¿No recibiste el código? Reenviar",
-        style: GoogleFonts.plusJakartaSans(
-          color: AppColorsConstants.primary,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      onPressed: isLoading ? null : onPressed,
+      child: isLoading
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Text(
+              '¿No recibiste el código? Reenviar',
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColorsConstants.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
     );
   }
 }

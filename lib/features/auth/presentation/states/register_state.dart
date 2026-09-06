@@ -1,7 +1,7 @@
-
 /// Clase de estado inmutable para la vista de Registro.
 class RegisterState {
   final bool isLoading;
+  final bool isResending;
   final String? errorMessage;
   final String name;
   final String lastname;
@@ -17,12 +17,13 @@ class RegisterState {
 
   RegisterState({
     this.isLoading = false,
+    this.isResending = false,
     this.errorMessage,
     this.name = '',
     this.lastname = '',
     this.birthDate,
     this.email = '',
-    this.password  = '',
+    this.password = '',
     this.isObscure = true,
     this.selectedCountry = '',
     this.selectedCurrency = '',
@@ -34,6 +35,7 @@ class RegisterState {
   // Metodo copyWith para respetar la inmutabilidad
   RegisterState copyWith({
     bool? isLoading,
+    bool? isResending,
     String? errorMessage,
     String? name,
     String? lastname,
@@ -49,6 +51,7 @@ class RegisterState {
   }) {
     return RegisterState(
       isLoading: isLoading ?? this.isLoading,
+      isResending: isResending ?? this.isResending,
       errorMessage: errorMessage ?? this.errorMessage,
       name: name ?? this.name,
       lastname: lastname ?? this.lastname,

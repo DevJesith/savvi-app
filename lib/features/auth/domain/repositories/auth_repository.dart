@@ -30,6 +30,9 @@ abstract class AuthRepository {
 
   Future<void> verifyOTP({required String email, required String token});
 
+  // Reenvia el codigo de confirmacion al correo del usuario.
+  Future<void> resendVerificationCode({required String email});
+
   Future<void> updateProfile({
     required String userId,
     required UserEntity user,
