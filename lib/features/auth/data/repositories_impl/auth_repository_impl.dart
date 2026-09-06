@@ -31,6 +31,36 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await _supabase.auth.signInWithPassword(
+        email: email.trim().toLowerCase(),
+        password: password,
+      );
+
+      print('🔴 Sesión creada: ${_supabase.auth.currentSession != null}');
+      print(' 🔴Usuario autenticado: ${_supabase.auth.currentUser?.email}');
+    } on AuthApiException catch (e) {
+      print('🔴 Error de Supabase: ${e.message}');
+      //Traducimos los errores mas comunes de supabase a mensaje amigables
+      if (e.message.contains('Invalid login credentials')) {
+        throw Exception('🔴 Correo o contraseña incorrectos.');
+      } else if (e.message.contains('Email not confirmed')) {
+        throw Exception('🔴 Por favor confirma tu correo antes ingresar.');
+      }
+      throw Exception(e.message);
+    } catch (e) {
+      print('🔴 Error de autenticación: $e');
+      throw Exception(
+        '🔴 Error al conectar con el servidor. Revisa tu conexion a internet',
+      );
+    }
+  }
+
+  @override
   Future<void> registerWithEmail({
     required UserEntity user,
     required String password,
@@ -39,7 +69,7 @@ class AuthRepositoryImpl implements AuthRepository {
     await _supabase.auth.signUp(
       email: user.email.trim().toLowerCase(),
       password: password,
-      emailRedirectTo: 'io.supabase.flutter://callback'
+      emailRedirectTo: 'io.supabase.flutter://callback',
     );
 
     // if (response.user != null) {
@@ -84,7 +114,7 @@ class AuthRepositoryImpl implements AuthRepository {
             'currency': user.currency,
             'occupation': occupation,
             'usage_intent': usageIntent,
-            'country': user.country
+            'country': user.country,
           })
           .eq('id', userId);
     } catch (e) {

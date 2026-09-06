@@ -153,6 +153,7 @@ class _LoginForm extends ConsumerWidget {
     final emailController = ref.watch(emailControllerProvider);
     final passwordController = ref.watch(passwordControllerProvider);
     final isObscure = ref.watch(obscureTextProvider);
+    final isLoading = ref.watch(loginLoadingProvider);
 
     return Form(
       key: formKey,
@@ -227,18 +228,71 @@ class _LoginForm extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  // TODO: Llamar al repositorio de login
-                }
-              },
-              child: Text(
-                'Ingresar',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (!formKey.currentState!.validate()) {
+                        return;
+                      }
+
+                      ref.read(loginLoadingProvider.notifier).start();
+
+                      try {
+                        await ref
+                            .read(authRepositoryProvider)
+                            .signInWithEmail(
+                              email: emailController.text,
+                              password: passwordController.text,
+                            );
+                      } catch (e) {
+                        if (!context.mounted) {
+                          return;
+                        }
+
+                        FocusManager.instance.primaryFocus?.unfocus();
+
+                        final message = e.toString().replaceFirst(
+                          'Exception: ',
+                          '',
+                        );
+
+                        await showDialog<void>(
+                          context: context,
+                          builder: (dialogContext) {
+                            return AlertDialog(
+                              title: const Text('No se pudo iniciar sesión'),
+                              content: Text(message),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop();
+                                  },
+                                  child: const Text('Entendido'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } finally {
+                        ref.read(loginLoadingProvider.notifier).stop();
+                      }
+                    },
+              child: isLoading
+                  ? const SizedBox(
+                      height: 22,
+                      width: 22,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      'Ingresar',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
         ],

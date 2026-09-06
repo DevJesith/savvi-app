@@ -43,8 +43,27 @@ class ObscureTextNotifier extends Notifier<bool> {
 /// El provider (el enlace para que la UI pueda usar el cerebro)
 ///
 /// Declaramos que el Provider de forma global para que cualquioer pantalla pueda "escucharlo".
-// ignore: unintended_html_in_doc_comment
 /// NotifierProvider<Cerebro, TipoDeDato>
 final obscureTextProvider = NotifierProvider<ObscureTextNotifier, bool>(() {
   return ObscureTextNotifier();
 });
+
+
+
+class LoginLoadingNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void start() {
+    state = true;
+  }
+
+  void stop() {
+    state = false;
+  }
+}
+
+final loginLoadingProvider =
+    NotifierProvider<LoginLoadingNotifier, bool>(
+  LoginLoadingNotifier.new,
+);

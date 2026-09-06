@@ -10,6 +10,12 @@ abstract class AuthRepository {
   Future<void> signInWithGoogle();
   Future<void> signOut();
 
+  // Declarar parametros para iniciar sesion
+  Future<void> signInWithEmail({
+    required String email,
+    required String password,
+  });
+
   // Registra un usuario y devuelve exito o un error
   Future<void> registerWithEmail({
     required UserEntity user,
