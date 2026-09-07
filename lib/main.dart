@@ -7,6 +7,7 @@ import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/splash_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/welcome_screen.dart';
+import 'package:savvi/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -59,25 +60,10 @@ class SavviApp extends ConsumerWidget {
                   return const ResetPasswordScreen();
                 }
                 
+                // ESCENARIO 1: Usuario logueado
                 if (data.session != null) {
                   // Si hay sesion activa, lo dirige al Dashboard
-                  return Scaffold(
-                    body: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Hola, ${data.session!.user.email}'),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await ref.read(authRepositoryProvider).signOut();
-                            },
-                            child: Text("Cerrar sesion"),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  return const DashboardScreen();
                 }
 
                 // ESCENARIO 2: Usuario deslogueado
