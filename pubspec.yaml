@@ -39,10 +39,6 @@ dependencies:
   country_picker: ^2.0.28
   currency_picker: ^2.0.22
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
   # El puente con la base de datos
   supabase_flutter: ^2.15.0
 
@@ -62,6 +58,9 @@ dev_dependencies:
 
   pin_code_fields: ^8.0.1
 
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
   # Fuentes de Google
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

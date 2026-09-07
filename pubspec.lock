@@ -130,7 +130,7 @@ packages:
     source: hosted
     version: "2.0.28"
   country_pickers:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: country_pickers
       sha256: b10f6618fa64fbba02ffc4ad1b84dc0ca071cc206e5376de1698bddd980b355a
@@ -242,7 +242,7 @@ packages:
     source: hosted
     version: "1.1.1"
   fl_chart:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: fl_chart
       sha256: b938f77d042cbcd822936a7a359a7235bad8bd72070de1f827efc2cc297ac888
@@ -263,7 +263,7 @@ packages:
     source: hosted
     version: "6.0.0"
   flutter_riverpod:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_riverpod
       sha256: "9255e1e3ad6e38906a1b4f8287678f95f378744c5b46b1985588543f3f19046e"
@@ -271,7 +271,7 @@ packages:
     source: hosted
     version: "3.3.2"
   flutter_secure_storage:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_secure_storage
       sha256: "7686b1d6a29985dcbb808c59518226e603e3bfa7c0ddfd1a0d00e4cda77c868e"
@@ -409,7 +409,7 @@ packages:
     source: hosted
     version: "4.1.2"
   intl:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: intl
       sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
@@ -681,7 +681,7 @@ packages:
     source: hosted
     version: "2.3.0"
   pin_code_fields:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: pin_code_fields
       sha256: "4c0db7fbc889e622e7c71ea54b9ee624bb70c7365b532abea0271b17ea75b729"
@@ -942,7 +942,7 @@ packages:
     source: hosted
     version: "2.13.0"
   supabase_flutter:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: supabase_flutter
       sha256: c5f9cc95162fd057be851ce38a0d54a0391cecad3a6ddfce1314e47f89a382f9
