@@ -49,3 +49,12 @@ final hasSeenOnboardingProvider = FutureProvider<bool>((ref) async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getBool(ApiConstants.seenOnboardingKey) ?? false;
 });
+
+// Consulta si el usuario ya completo todos los datos obligatorios de su perfil.
+// Se usa para decidir entre enviarlo al Dashboard o a UserProfiling.
+final hasProfileProvider = FutureProvider.family<bool, String>((
+  ref,
+  userId,
+) async {
+  return ref.read(authRepositoryProvider).hasProfile(userId: userId);
+});

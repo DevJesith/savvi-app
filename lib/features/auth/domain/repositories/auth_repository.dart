@@ -6,6 +6,11 @@ abstract class AuthRepository {
 
   User? get currentUser;
 
+  // Comprueba si el usuario ya tiene un perfil guardado
+  Future<bool> hasProfile({
+    required String userId
+  });
+
   //Funciones de entrada y salida
   Future<void> signInWithGoogle();
   Future<void> signOut();

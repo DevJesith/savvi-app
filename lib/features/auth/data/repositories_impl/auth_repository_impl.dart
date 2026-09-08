@@ -13,6 +13,42 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   User? get currentUser => _supabase.auth.currentUser;
 
+  // Comprueba si el usuario tiene todos los datos obligatorios
+  // antes de permitirle acceder al Dashboard.
+  @override
+  Future<bool> hasProfile({required String userId}) async {
+    try {
+      final profile = await _supabase
+          .from('profiles')
+          .select('country, occupation, usage_intent, birth_date')
+          .eq('id', userId)
+          .maybeSingle();
+
+      if (profile == null) {
+        return false;
+      }
+
+      final country = profile['country'];
+      final occupation = profile['occupation'];
+      final usageIntent = profile['usage_intent'];
+      final birthDate = profile['birth_date'];
+
+      return country != null &&
+          country.toString().trim().isNotEmpty &&
+          occupation != null &&
+          occupation.toString().trim().isNotEmpty &&
+          usageIntent != null &&
+          usageIntent.toString().trim().isNotEmpty &&
+          birthDate != null;
+    } on PostgrestException catch (e) {
+      throw Exception('Error al consultar el perfil: ${e.message}');
+    } catch (e) {
+      throw Exception(
+        'No se pudo comprobar el perfil. Revisa tu conexión a internet.',
+      );
+    }
+  }
+
   @override
   Future<void> signInWithGoogle() async {
     try {
@@ -149,6 +185,8 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  // Inserta o actualiza los datos adicionales del perfil.
+  // El usuario ya debe estar autenticado antes de ejecutar este metodo.
   @override
   Future<void> updateProfile({
     required String userId,
@@ -159,8 +197,10 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _supabase
           .from('profiles')
-          .update({
+          .upsert({
+            'id': userId,
             'full_name': '${user.name} ${user.lastname}',
+            'email': user.email,
             'birth_date': user.birthDate?.toIso8601String(),
             'currency': user.currency,
             'occupation': occupation,
@@ -168,8 +208,10 @@ class AuthRepositoryImpl implements AuthRepository {
             'country': user.country,
           })
           .eq('id', userId);
-    } catch (e) {
+    } on PostgrestException catch (e) {
       throw Exception("Error al guardar el perfil: $e");
+    } catch (e) {
+      throw Exception('Error inesperado al guardar el perfil.');
     }
   }
 }

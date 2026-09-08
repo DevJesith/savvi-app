@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:savvi/core/constants/app_colors_constants.dart';
+import 'package:savvi/features/auth/presentation/providers/auth_providers.dart';
 import 'package:savvi/features/auth/presentation/providers/register_providers.dart';
 import 'package:savvi/shared/widgets/usage_intent_card_widget.dart';
 
@@ -59,7 +60,39 @@ class UsageIntentStepView extends ConsumerWidget {
             // Boton de siguiente
             _NextButton(
               isEnabled: state.selectedUsageIntent.isNotEmpty,
-              onPressed: () {
+              onPressed: () async {
+                if (state.isGoogleUser) {
+                  try {
+                    await notifier.completeGoogleProfile();
+
+                    if (!context.mounted) {
+                      return;
+                    }
+
+                    final userId = ref
+                        .read(authRepositoryProvider)
+                        .currentUser
+                        ?.id;
+
+                    if (userId != null) {
+                      ref.invalidate(hasProfileProvider(userId));
+                    }
+                  } catch (e) {
+                    if (!context.mounted) {
+                      return;
+                    }
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+
+                  return;
+                }
+
                 pageController.nextPage(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,

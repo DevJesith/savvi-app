@@ -8,6 +8,28 @@ class RegisterNotifier extends Notifier<RegisterState> {
   @override
   RegisterState build() => RegisterState();
 
+  /// Limpia los datos del formulario para iniciar un registro nuevo.
+  void resetState() {
+    state = RegisterState();
+  }
+
+  /// Inicializar el formulario con los datos recibidos desde Google.
+  ///
+  /// La contraseña no se completa porque la autenticacion la gestion Google
+  void initializeFromGoogle({
+    required String email,
+    required String name,
+    required String lastname,
+  }) {
+    state = state.copyWith(
+      email: email.trim().toLowerCase(),
+      name: name,
+      lastname: lastname,
+      password: '',
+      isGoogleUser: true,
+    );
+  }
+
   // Metodos para actualizar el estado
   void updateName(String value) => state = state.copyWith(name: value);
   void updateLastname(String value) => state = state.copyWith(lastname: value);
@@ -66,6 +88,43 @@ class RegisterNotifier extends Notifier<RegisterState> {
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      rethrow;
+    }
+  }
+
+  /// Guarda el perfil completado por un usuario autenticado con Google.
+  Future<void> completeGoogleProfile() async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      final userId = ref.read(authRepositoryProvider).currentUser?.id;
+
+      if (userId == null) {
+        throw Exception('No hay un usuario autenticado.');
+      }
+
+      final userEntity = UserEntity(
+        name: state.name,
+        lastname: state.lastname,
+        email: state.email,
+        birthDate: state.birthDate,
+        currency: state.selectedCurrency,
+        country: state.selectedCountry,
+      );
+
+      await ref
+          .read(authRepositoryProvider)
+          .updateProfile(
+            userId: userId,
+            user: userEntity,
+            occupation: state.selectedOccupation,
+            usageIntent: state.selectedUsageIntent,
+          );
+
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+
       rethrow;
     }
   }

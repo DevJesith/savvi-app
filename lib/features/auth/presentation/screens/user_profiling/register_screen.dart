@@ -39,6 +39,32 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
           ? DateFormat('dd/MM/yyyy').format(registerState.birthDate!)
           : '',
     );
+
+    ref.listenManual(registerProvider, (previous, next) {
+      if (_nameController.text != next.name) {
+        _nameController.text = next.name;
+      }
+
+      if (_lastNameController.text != next.lastname) {
+        _lastNameController.text = next.lastname;
+      }
+
+      if (_emailController.text != next.email) {
+        _emailController.text = next.email;
+      }
+
+      if (_passwordController.text != next.password) {
+        _passwordController.text = next.password;
+      }
+
+      final birthDateText = next.birthDate == null
+          ? ''
+          : DateFormat('dd/MM/yyyy').format(next.birthDate!);
+
+      if (_birthDateController.text != birthDateText) {
+        _birthDateController.text = birthDateText;
+      }
+    });
   }
 
   // Los cierra/libera cuando el widget se destruye, sirve para que sea eficiente la app y no tenga
@@ -150,7 +176,8 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
                   controller: _emailController,
                   nameInput: 'Correo electrónico',
                   keyboardType: TextInputType.emailAddress,
-                  onChanged: notifier.updateEmail,
+                  readOnly: state.isGoogleUser,
+                  onChanged: state.isGoogleUser ? null : notifier.updateEmail,
                   validator: (value) =>
                       !value!.contains('@') ? 'Email inválido' : null,
                 ),
@@ -158,23 +185,24 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
                 const SizedBox(height: 20),
 
                 // Campo: Password
-                InputsReutilizableWidgets(
-                  controller: _passwordController,
-                  nameInput: 'Crear contraseña',
-                  onChanged: notifier.updatePassword,
-                  obscuredText: state.isObscure,
-                  validator: (value) =>
-                      value!.length < 8 ? 'Mínimo 8 caracteres' : null,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      state.isObscure
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                      color: const Color(0xFF64748B),
+                if (!state.isGoogleUser)
+                  InputsReutilizableWidgets(
+                    controller: _passwordController,
+                    nameInput: 'Crear contraseña',
+                    onChanged: notifier.updatePassword,
+                    obscuredText: state.isObscure,
+                    validator: (value) =>
+                        value!.length < 8 ? 'Mínimo 8 caracteres' : null,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        state.isObscure
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: const Color(0xFF64748B),
+                      ),
+                      onPressed: notifier.toggleObscure,
                     ),
-                    onPressed: notifier.toggleObscure,
                   ),
-                ),
               ],
             ),
           ),
@@ -190,31 +218,38 @@ class _RegisterStepViewState extends ConsumerState<RegisterStepView> {
           _SubmitButton(
             isLoading: state.isLoading,
             onPressed: () async {
-              if (registerKey.currentState!.validate()) {
-                try {
-                  // 1. Guardamos la contraseña en el estado
+              if (!registerKey.currentState!.validate()) {
+                return;
+              }
+
+              try {
+                // Google ya autentico al usuario; por eso no repetimos signUp
+                // ni solicitamos contraseña para este flujo.
+                if (!state.isGoogleUser) {
                   notifier.updatePassword(_passwordController.text);
 
-                  // 2. Disparamos el registro en Supabase
                   await notifier.startSignUp();
-
-                  // 3. Avanzamos a la siguiente pantalla SOLO si fue exitoso
-                  if (context.mounted) {
-                    widget.pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(e.toString()),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
                 }
+
+                if (!context.mounted) {
+                  return;
+                }
+
+                widget.pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              } catch (e) {
+                if (!context.mounted) {
+                  return;
+                }
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(e.toString()),
+                    backgroundColor: Colors.red,
+                  ),
+                );
               }
             },
           ),

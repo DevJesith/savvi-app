@@ -6,6 +6,7 @@ import 'package:savvi/features/auth/presentation/providers/auth_providers.dart';
 import 'package:savvi/features/auth/presentation/screens/login_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/splash_screen.dart';
+import 'package:savvi/features/auth/presentation/screens/user_profiling/user_profiling_flow_screen.dart';
 import 'package:savvi/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:savvi/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -55,15 +56,74 @@ class SavviApp extends ConsumerWidget {
           : authState.when(
               // CASO A: Tenemos una respuesta de Supabase
               data: (data) {
-
                 if (data.event == AuthChangeEvent.passwordRecovery) {
                   return const ResetPasswordScreen();
                 }
-                
+
                 // ESCENARIO 1: Usuario logueado
                 if (data.session != null) {
-                  // Si hay sesion activa, lo dirige al Dashboard
-                  return const DashboardScreen();
+                  final user = data.session!.user;
+                  final isGoogleUser =
+                      user.appMetadata['provider'] == 'google' ||
+                      user.identities?.any(
+                            (identity) => identity.provider == 'google',
+                          ) ==
+                          true;
+
+                  print('☁️ Proveedor: ${user.appMetadata['provider']}');
+                  print('☁️ Identidades: ${user.identities}');
+                  print('☁️ Es Google: $isGoogleUser');
+
+                  final profileState = ref.watch(hasProfileProvider(user.id));
+
+                  return profileState.when(
+                    loading: () => const SplashScreen(),
+                    error: (error, stackTrace) {
+                      return Scaffold(
+                        body: Center(
+                          child: Text('No se pudo consultar el perfil: $error'),
+                        ),
+                      );
+                    },
+                    data: (hasProfile) {
+                      // Un perfil completo puede acceder directamente al Dashboard.
+                      // Un perfil incompleto de Google debe terminar UserProfiling.
+                      print('☁️ Tiene perfil: $hasProfile');
+                      print('☁️ User ID consultado: ${user.id}');
+                      if (hasProfile) {
+                        return const DashboardScreen();
+                      }
+
+                      if (!isGoogleUser) {
+                        return const DashboardScreen();
+                      }
+
+                      final metadata = user.userMetadata ?? {};
+
+                      final fullName =
+                          (metadata['full_name'] ?? metadata['name'] ?? '')
+                              .toString()
+                              .trim();
+
+                      final nameParts = fullName.isEmpty
+                          ? <String>[]
+                          : fullName.split(RegExp(r'\s+'));
+
+                      final googleName = nameParts.isNotEmpty
+                          ? nameParts.first
+                          : '';
+
+                      final googleLastname = nameParts.length > 1
+                          ? nameParts.sublist(1).join(' ')
+                          : '';
+
+                      return UserProfilingFlowScreen(
+                        googleEmail: user.email ?? '',
+                        googleName: googleName,
+                        googleLastName: googleLastname,
+                      );
+                    },
+                  );
                 }
 
                 // ESCENARIO 2: Usuario deslogueado

@@ -2,6 +2,7 @@
 class RegisterState {
   final bool isLoading;
   final bool isResending;
+  final bool isGoogleUser;
   final String? errorMessage;
   final String name;
   final String lastname;
@@ -18,6 +19,7 @@ class RegisterState {
   RegisterState({
     this.isLoading = false,
     this.isResending = false,
+    this.isGoogleUser = false,
     this.errorMessage,
     this.name = '',
     this.lastname = '',
@@ -36,6 +38,7 @@ class RegisterState {
   RegisterState copyWith({
     bool? isLoading,
     bool? isResending,
+    bool? isGoogleUser,
     String? errorMessage,
     String? name,
     String? lastname,
@@ -52,6 +55,7 @@ class RegisterState {
     return RegisterState(
       isLoading: isLoading ?? this.isLoading,
       isResending: isResending ?? this.isResending,
+      isGoogleUser: isGoogleUser ?? this.isGoogleUser,
       errorMessage: errorMessage ?? this.errorMessage,
       name: name ?? this.name,
       lastname: lastname ?? this.lastname,
