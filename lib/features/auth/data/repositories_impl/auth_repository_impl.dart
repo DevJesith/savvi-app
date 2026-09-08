@@ -134,12 +134,32 @@ class AuthRepositoryImpl implements AuthRepository {
     required UserEntity user,
     required String password,
   }) async {
-    // 1. Registro en la tabla Auth de Supabase
-    await _supabase.auth.signUp(
-      email: user.email.trim().toLowerCase(),
-      password: password,
-      emailRedirectTo: 'io.supabase.flutter://callback',
-    );
+    try {
+      // Supabase puede devolver una respuesta sin identidades cuando el correo
+      // ya existe, especialmente cuando la protección contra enumeración está activa.
+      final response = await _supabase.auth.signUp(
+        email: user.email.trim().toLowerCase(),
+        password: password,
+        emailRedirectTo: 'io.supabase.flutter://callback',
+      );
+
+      final identities = response.user?.identities;
+      if (response.user == null || (identities != null && identities.isEmpty)) {
+        throw Exception(
+          'Este correo ya se encuentra registrado. Inicia sesión o recupera tu contraseña.',
+        );
+      }
+    } on AuthApiException catch (e) {
+      if (e.message.toLowerCase().contains('already registered') ||
+          e.message.toLowerCase().contains('already been registered') ||
+          e.message.toLowerCase().contains('user already exists')) {
+        throw Exception(
+          'Este correo ya se encuentra registrado. Inicia sesión o recupera tu contraseña.',
+        );
+      }
+
+      throw Exception(e.message);
+    }
 
     // if (response.user != null) {
     //   // 2. Si el registro fue exitoso, guardamos los datos extra en la tabla 'profiles'
